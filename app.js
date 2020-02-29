@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const nodemailer = require('nodemailer');
 var mysql = require('mysql')
-
+require('dotenv').config();
 const app= express();
 
 //view engine setup
@@ -14,10 +14,10 @@ app.set('view engine', 'pug')
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'mydatabase'
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE_NAME
   })
   
 connection.connect(function(err){
@@ -49,8 +49,8 @@ app.post('/submit',(req,res)=>{
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: '1rn17cs022.ashwinik@gmail.com', // generated ethereal user
-        pass: '1rn17cs022'  // generated ethereal password
+        user: process.env.SENDER_EMAIL, // generated ethereal user
+        pass: process.env.SENDER_EMAIL_PASSWORD // generated ethereal password
     },
     tls:{
       rejectUnauthorized:false
@@ -59,10 +59,9 @@ app.post('/submit',(req,res)=>{
 
   // setup email data with unicode symbols
   var mailOptions = {
-      from: '"Ashwini" <1rn17cs022.ashwinik@gmail.com>', // sender address
+      from: '"Ashwini"<process.env.SENDER_EMAIL>', // sender address
       to: req.body.email, // list of receivers
       subject: 'Online application registration', // Subject line
-      text:'hello', // plain text body
       html: output // html body
   };
 
